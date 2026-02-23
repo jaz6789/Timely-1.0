@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timely â€” Smart Scheduling for Students</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2f6e;
+    --gold: #f5a623;
+    --sky: #4a9fd4;
+    --ink: #0d1b2a;
+    --paper: #f8f9fc;
+    --white: #ffffff;
+    --muted: #6b7a99;
+    --border: #e4e8f0;
+    --high-bg: #fff3f0;
+    --high-dot: #e8533a;
+    --low-bg: #f0f5ff;
+    --low-dot: #2d5be3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+/* NAV */
+nav {
+position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+display: flex; align-items: center; justify-content: space-between;
+padding: 1rem 5vw;
+background: rgba(248,249,252,0.9);
+backdrop-filter: blur(14px);
+border-bottom: 1px solid var(â€“border);
+}
+.logo-wrap { display: flex; align-items: center; gap: 0.6rem; }
+.logo-wrap img { height: 36px; width: 36px; object-fit: contain; border-radius: 8px; }
+.logo-text { font-family: â€˜Playfair Displayâ€™, serif; font-size: 1.45rem; font-weight: 900; color: var(â€“navy); }
+.logo-text span { color: var(â€“gold); }
+nav ul { list-style: none; display: flex; gap: 2rem; align-items: center; }
+nav ul a { text-decoration: none; color: var(â€“muted); font-size: 0.82rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; }
+nav ul a:hover { color: var(â€“navy); }
+.btn { display: inline-block; text-decoration: none; padding: 0.6rem 1.5rem; border-radius: 100px; font-weight: 600; font-size: 0.88rem; cursor: pointer; border: none; transition: all 0.2s; font-family: â€˜DM Sansâ€™, sans-serif; }
+.btn-dark { background: var(â€“navy); color: var(â€“white); }
+.btn-dark:hover { background: var(â€“gold); color: var(â€“navy); }
+.btn-outline { background: transparent; color: var(â€“navy); border: 2px solid var(â€“navy); }
+.btn-outline:hover { background: var(â€“navy); color: var(â€“white); }
+.btn-lg { padding: 0.9rem 2.2rem; font-size: 1rem; }
+.btn-gold { background: var(â€“gold); color: var(â€“navy); font-weight: 700; }
+.btn-gold:hover { background: #e09820; }
+.btn-ghost { background: transparent; color: white; border: 2px solid rgba(255,255,255,0.35); }
+.btn-ghost:hover { border-color: white; }
+
+/* HERO */
+.hero {
+min-height: 100vh;
+display: grid; grid-template-columns: 1fr 1fr;
+gap: 3rem; align-items: center;
+padding: 8rem 5vw 5rem;
+position: relative; overflow: hidden;
+}
+.hero::before {
+content: â€˜â€™; position: absolute; top: -300px; right: -200px;
+width: 700px; height: 700px; border-radius: 50%;
+background: radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%);
+pointer-events: none;
+}
+.hero-label {
+display: inline-flex; align-items: center; gap: 0.5rem;
+background: var(â€“low-bg); color: var(â€“navy);
+font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em;
+text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 100px;
+margin-bottom: 1.5rem; animation: fadeUp 0.6s ease both;
+}
+.hero-label::before { content: â€˜â—â€™; color: var(â€“gold); font-size: 0.6rem; }
+h1 {
+font-family: â€˜Playfair Displayâ€™, serif;
+font-size: clamp(2.8rem, 4.5vw, 4rem);
+font-weight: 900; line-height: 1.1;
+letter-spacing: -0.03em; margin-bottom: 1.4rem;
+animation: fadeUp 0.6s 0.1s ease both;
+}
+h1 em { font-style: italic; color: var(â€“gold); }
+.hero-sub {
+font-size: 1.05rem; line-height: 1.7; color: var(â€“muted);
+max-width: 480px; margin-bottom: 2.5rem;
+animation: fadeUp 0.6s 0.2s ease both;
+}
+.hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeUp 0.6s 0.3s ease both; }
+.hero-stats { display: flex; gap: 2.5rem; margin-top: 3rem; animation: fadeUp 0.6s 0.4s ease both; }
+.stat-num { font-family: â€˜Playfair Displayâ€™, serif; font-size: 1.8rem; font-weight: 700; color: var(â€“navy); }
+.stat-label { font-size: 0.78rem; color: var(â€“muted); margin-top: 0.2rem; }
+
+/* MOCKUP */
+.hero-visual { position: relative; animation: fadeUp 0.8s 0.25s ease both; }
+.mockup-card {
+background: var(â€“white); border-radius: 20px;
+box-shadow: 0 20px 60px rgba(26,47,110,0.12), 0 4px 20px rgba(0,0,0,0.06);
+padding: 1.8rem;
+}
+.mockup-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.4rem; }
+.mockup-title { font-weight: 600; font-size: 0.95rem; color: var(â€“navy); }
+.mockup-date { font-size: 0.78rem; color: var(â€“muted); }
+.task-item {
+display: flex; align-items: center; gap: 0.8rem;
+padding: 0.85rem 1rem; border-radius: 12px; margin-bottom: 0.6rem; transition: transform 0.2s;
+}
+.task-item:hover { transform: translateX(4px); }
+.task-item.high { background: var(â€“high-bg); }
+.task-item.low { background: var(â€“low-bg); }
+.task-item.medium { background: #f0fdf4; }
+.priority-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.high .priority-dot { background: var(â€“high-dot); }
+.low .priority-dot { background: var(â€“low-dot); }
+.medium .priority-dot { background: #22c55e; }
+.task-name { font-size: 0.88rem; font-weight: 500; flex: 1; }
+.task-due { font-size: 0.75rem; color: var(â€“muted); }
+.priority-badge { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; padding: 0.2rem 0.6rem; border-radius: 100px; text-transform: uppercase; }
+.high .priority-badge { background: var(â€“high-dot); color: white; }
+.low .priority-badge { background: var(â€“low-dot); color: white; }
+.medium .priority-badge { background: #22c55e; color: white; }
+.schedule-strip { margin-top: 1.2rem; padding: 1rem; background: var(â€“navy); border-radius: 12px; color: white; }
+.strip-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-bottom: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.time-slots { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.time-slot { font-size: 0.72rem; padding: 0.3rem 0.7rem; border-radius: 100px; background: rgba(255,255,255,0.1); }
+.time-slot.active { background: var(â€“gold); color: var(â€“navy); font-weight: 600; }
+.float-badge {
+position: absolute; background: white; border-radius: 14px;
+padding: 0.7rem 1rem;
+box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+font-size: 0.8rem; font-weight: 600;
+display: flex; align-items: center; gap: 0.5rem;
+}
+.badge-top { top: -18px; right: -16px; }
+.badge-bottom { bottom: -14px; left: -14px; }
+
+/* SECTIONS */
+section { padding: 6rem 5vw; }
+.section-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(â€“gold); margin-bottom: 0.8rem; }
+h2 { font-family: â€˜Playfair Displayâ€™, serif; font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; color: var(â€“navy); margin-bottom: 1rem; }
+.section-sub { font-size: 1rem; color: var(â€“muted); line-height: 1.7; max-width: 520px; }
+.section-head { text-align: center; max-width: 600px; margin: 0 auto 4rem; }
+.section-head .section-sub { margin: 0 auto; }
+
+/* FEATURES */
+.features { background: var(â€“white); }
+.features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+.feat-card {
+padding: 2rem; border-radius: 16px; border: 1px solid var(â€“border);
+transition: all 0.3s;
+}
+.feat-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(26,47,110,0.1); }
+.feat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.2rem; }
+.icon-gold { background: rgba(245,166,35,0.15); }
+.icon-navy { background: rgba(26,47,110,0.1); }
+.icon-sky { background: rgba(74,159,212,0.15); }
+.icon-red { background: rgba(232,83,58,0.1); }
+.icon-green { background: rgba(34,197,94,0.1); }
+.icon-purple { background: rgba(139,92,246,0.1); }
+.feat-title { font-weight: 700; font-size: 1rem; color: var(â€“navy); margin-bottom: 0.5rem; }
+.feat-desc { font-size: 0.88rem; color: var(â€“muted); line-height: 1.6; }
+
+/* HOW IT WORKS */
+.how { background: var(â€“paper); }
+.steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem; }
+.step { text-align: center; }
+.step-num {
+width: 56px; height: 56px; border-radius: 50%;
+background: var(â€“navy); color: var(â€“gold);
+font-family: â€˜Playfair Displayâ€™, serif; font-size: 1.4rem; font-weight: 900;
+display: flex; align-items: center; justify-content: center;
+margin: 0 auto 1.2rem; position: relative;
+}
+.step-num::after {
+content: â€˜â€™; position: absolute; left: 100%; top: 50%;
+width: calc(100% + 2rem); height: 1px;
+background: var(â€“border); transform: translateY(-50%);
+}
+.step:last-child .step-num::after { display: none; }
+.step-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem; color: var(â€“navy); }
+.step-desc { font-size: 0.82rem; color: var(â€“muted); line-height: 1.6; }
+
+/* PRIORITY */
+.priority-section { background: var(â€“navy); color: white; }
+.priority-section h2 { color: white; }
+.priority-section .section-sub { color: rgba(255,255,255,0.6); }
+.priority-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 3rem; }
+.p-task { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.2rem; border-radius: 14px; margin-bottom: 0.7rem; }
+.p-task.hp { background: rgba(232,83,58,0.2); border: 1px solid rgba(232,83,58,0.3); }
+.p-task.lp { background: rgba(45,91,227,0.2); border: 1px solid rgba(45,91,227,0.3); }
+.p-task.mp { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.25); }
+.p-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.hp .p-dot { background: #e8533a; }
+.lp .p-dot { background: #4a9fd4; }
+.mp .p-dot { background: #22c55e; }
+.p-name { flex: 1; font-size: 0.9rem; font-weight: 500; }
+.p-tag { font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 100px; text-transform: uppercase; }
+.hp .p-tag { background: #e8533a; color: white; }
+.lp .p-tag { background: #4a9fd4; color: white; }
+.mp .p-tag { background: #22c55e; color: white; }
+.p-deadline { font-size: 0.75rem; color: rgba(255,255,255,0.45); white-space: nowrap; }
+.priority-text h3 { font-family: â€˜Playfair Displayâ€™, serif; font-size: 1.8rem; font-weight: 700; color: white; margin-bottom: 1rem; }
+.priority-text p { color: rgba(255,255,255,0.65); line-height: 1.7; margin-bottom: 1.2rem; font-size: 0.95rem; }
+.p-pills { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.p-pill { padding: 0.4rem 1rem; border-radius: 100px; font-size: 0.78rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.8); }
+
+/* SCHEDULE */
+.schedule-section { background: var(â€“white); }
+.schedule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+.sched-title { font-family: â€˜Playfair Displayâ€™, serif; font-size: clamp(1.8rem,3vw,2.4rem); font-weight: 900; letter-spacing: -0.03em; color: var(â€“navy); margin-bottom: 1rem; line-height: 1.2; }
+.sched-p { color: var(â€“muted); line-height: 1.7; margin-bottom: 1.5rem; }
+.chips { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.chip { display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; border-radius: 100px; background: var(â€“paper); border: 1px solid var(â€“border); font-size: 0.8rem; font-weight: 500; color: var(â€“navy); }
+.chip-dot { width: 8px; height: 8px; border-radius: 50%; }
+.week-view { background: var(â€“paper); border-radius: 16px; padding: 1.5rem; border: 1px solid var(â€“border); }
+.week-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
+.day-col { text-align: center; }
+.day-name { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: var(â€“muted); margin-bottom: 6px; letter-spacing: 0.06em; }
+.day-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 600; margin: 0 auto 6px; }
+.day-num.today { background: var(â€“navy); color: white; }
+.event-block { font-size: 0.6rem; padding: 3px 4px; border-radius: 4px; font-weight: 500; text-align: center; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ev-class { background: rgba(26,47,110,0.12); color: var(â€“navy); }
+.ev-exam { background: rgba(232,83,58,0.15); color: #c0392b; }
+.ev-club { background: rgba(245,166,35,0.2); color: #b7720a; }
+.ev-study { background: rgba(34,197,94,0.15); color: #16a34a; }
+
+/* TESTIMONIALS */
+.testimonials { background: var(â€“paper); }
+.testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+.testi-card { background: var(â€“white); border-radius: 16px; padding: 1.8rem; border: 1px solid var(â€“border); transition: transform 0.3s; }
+.testi-card:hover { transform: translateY(-4px); }
+.stars { color: var(â€“gold); font-size: 0.9rem; margin-bottom: 1rem; letter-spacing: 2px; }
+.testi-text { font-size: 0.9rem; line-height: 1.7; color: var(â€“muted); margin-bottom: 1.2rem; font-style: italic; }
+.testi-author { display: flex; align-items: center; gap: 0.7rem; }
+.avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: white; flex-shrink: 0; }
+.author-name { font-weight: 600; font-size: 0.85rem; color: var(â€“navy); }
+.author-role { font-size: 0.75rem; color: var(â€“muted); }
+
+/* CTA */
+.cta-section { background: linear-gradient(135deg, var(â€“navy) 0%, #2d4a9e 100%); text-align: center; padding: 7rem 5vw; position: relative; overflow: hidden; }
+.cta-section::before { content: â€˜â€™; position: absolute; top: -200px; right: -200px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(245,166,35,0.2) 0%, transparent 70%); }
+.cta-section h2 { color: white; font-size: clamp(2rem,4vw,3rem); margin-bottom: 1rem; }
+.cta-section p { color: rgba(255,255,255,0.65); font-size: 1.05rem; margin-bottom: 2.5rem; }
+.cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+/* FOOTER */
+footer { background: var(â€“ink); color: rgba(255,255,255,0.5); padding: 3rem 5vw; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
+.footer-logo { display: flex; align-items: center; gap: 0.6rem; }
+.footer-logo img { height: 28px; border-radius: 6px; opacity: 0.85; }
+.footer-logo span { font-family: â€˜Playfair Displayâ€™, serif; font-weight: 900; color: white; font-size: 1.1rem; }
+footer p { font-size: 0.8rem; }
+.footer-links { display: flex; gap: 1.5rem; }
+.footer-links a { color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+.footer-links a:hover { color: var(â€“gold); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 900px) {
+.hero { grid-template-columns: 1fr; padding-top: 6rem; }
+.hero-visual { display: none; }
+.features-grid, .testi-grid { grid-template-columns: 1fr 1fr; }
+.steps { grid-template-columns: 1fr 1fr; }
+.step-num::after { display: none; }
+.priority-grid, .schedule-grid { grid-template-columns: 1fr; }
+nav ul li:not(:last-child) { display: none; }
+}
+@media (max-width: 600px) {
+.features-grid, .testi-grid { grid-template-columns: 1fr; }
+.steps { grid-template-columns: 1fr; }
+}
+</style>
+
+</head>
+<body>
+
+<!-- NAV -->
+
+<nav>
+  <div class="logo-wrap">
+    <img src="PHOTO-2026-02-21-10-50-56.jpeg" alt="Timely">
+    <span class="logo-text">Time<span>ly</span></span>
+  </div>
+  <ul>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#schedule">Schedule</a></li>
+    <li><a href="#cta" class="btn btn-dark">Get Started</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+  <div>
+    <div class="hero-label">Smart Student Scheduler</div>
+    <h1>Own your time,<br><em>ace your goals.</em></h1>
+    <p class="hero-sub">Timely automatically organizes your tasks, exams, classes, and club activities â€” prioritizing what matters most so you never miss a deadline again.</p>
+    <div class="hero-btns">
+      <a href="#cta" class="btn btn-dark btn-lg">Start for Free</a>
+      <a href="#how" class="btn btn-outline btn-lg">See How It Works</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">2x</div><div class="stat-label">More tasks completed</div></div>
+      <div><div class="stat-num">40%</div><div class="stat-label">Less missed deadlines</div></div>
+      <div><div class="stat-num">5 min</div><div class="stat-label">Setup time</div></div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="float-badge badge-top">
+      <span>ðŸŽ¯</span><span>3 tasks due today</span>
+    </div>
+    <div class="mockup-card">
+      <div class="mockup-header">
+        <div class="mockup-title">ðŸ“‹ Today's Tasks</div>
+        <div class="mockup-date">Mon, Feb 23</div>
+      </div>
+      <div class="task-item high">
+        <div class="priority-dot"></div>
+        <div class="task-name">ðŸ“ Physics Final Exam</div>
+        <div class="task-due">9:00 AM</div>
+        <div class="priority-badge">High</div>
+      </div>
+      <div class="task-item high">
+        <div class="priority-dot"></div>
+        <div class="task-name">ðŸ“Š Marketing Report</div>
+        <div class="task-due">11:59 PM</div>
+        <div class="priority-badge">High</div>
+      </div>
+      <div class="task-item medium">
+        <div class="priority-dot"></div>
+        <div class="task-name">ðŸ‹ï¸ Gym Session</div>
+        <div class="task-due">4:00 PM</div>
+        <div class="priority-badge">Med</div>
+      </div>
+      <div class="task-item low">
+        <div class="priority-dot"></div>
+        <div class="task-name">ðŸ“– Read Chapter 5</div>
+        <div class="task-due">Anytime</div>
+        <div class="priority-badge">Low</div>
+      </div>
+      <div class="task-item low">
+        <div class="priority-dot"></div>
+        <div class="task-name">ðŸŽ­ Drama Club Meeting</div>
+        <div class="task-due">6:00 PM</div>
+        <div class="priority-badge">Low</div>
+      </div>
+      <div class="schedule-strip">
+        <div class="strip-label">Upcoming Slots</div>
+        <div class="time-slots">
+          <span class="time-slot active">8:00 AM</span>
+          <span class="time-slot">10:30 AM</span>
+          <span class="time-slot">2:00 PM</span>
+          <span class="time-slot">6:00 PM</span>
+        </div>
+      </div>
+    </div>
+    <div class="float-badge badge-bottom">
+      <span>âœ…</span><span>Auto-scheduled & prioritized</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+
+<section class="features" id="features">
+  <div class="section-head">
+    <div class="section-label">Core Features</div>
+    <h2>Everything a student needs to stay on track</h2>
+    <p class="section-sub">From automated scheduling to distraction blocking â€” Timely handles it all so you can focus on learning.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon icon-red">ðŸ”¥</div>
+      <div class="feat-title">Smart Priority System</div>
+      <div class="feat-desc">Auto-assign High, Medium, or Low priority to tasks based on deadlines, exam weight, and your custom rules. Always know what to tackle first.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon icon-navy">ðŸ—“ï¸</div>
+      <div class="feat-title">University Schedule Sync</div>
+      <div class="feat-desc">Import your class timetable, exam schedule, and university calendar in one click. Timely builds around what already exists in your week.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon icon-gold">âš¡</div>
+      <div class="feat-title">Auto Task Generation</div>
+      <div class="feat-desc">Enter your assignments and exams â€” Timely automatically generates study sessions, prep blocks, and reminders leading up to each deadline.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon icon-green">ðŸ›ï¸</div>
+      <div class="feat-title">Club & Activity Tracking</div>
+      <div class="feat-desc">Add student society meetings, sports practices, volunteering, and personal commitments. Everything lives in one unified calendar.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon icon-sky">ðŸ“Š</div>
+      <div class="feat-title">Study Hours Tracker</div>
+      <div class="feat-desc">Log and visualize how many hours you study per subject each week. Spot where you're falling behind before it's too late.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon icon-purple">ðŸš«</div>
+      <div class="feat-title">Focus & App Blocker</div>
+      <div class="feat-desc">During scheduled study blocks, Timely blocks distracting apps and social media â€” keeping you in the zone when it matters most.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+
+<section class="how" id="how">
+  <div class="section-head">
+    <div class="section-label">How It Works</div>
+    <h2>Set up in minutes. Productive for months.</h2>
+    <p class="section-sub">Four simple steps to take full control of your academic life.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-title">Import Your Schedule</div>
+      <div class="step-desc">Connect your university portal or manually add your classes, exams, and recurring commitments.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-title">Add Your Tasks</div>
+      <div class="step-desc">Enter assignments, projects, study goals, and personal activities. Set deadlines and let Timely handle the rest.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-title">Get Auto-Prioritized</div>
+      <div class="step-desc">Timely intelligently ranks every task by urgency and importance, creating a clear daily action list.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-title">Execute & Track</div>
+      <div class="step-desc">Work through your day with confidence. Track completed tasks and study hours as you go.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIORITY SHOWCASE -->
+
+<section class="priority-section">
+  <div class="section-head">
+    <div class="section-label" style="color:var(--gold)">Priority Engine</div>
+    <h2>Never wonder what to do next</h2>
+    <p class="section-sub">Timely's priority engine evaluates deadlines, subject weight, and available time â€” so you always know exactly where to focus.</p>
+  </div>
+  <div class="priority-grid">
+    <div>
+      <div class="p-task hp"><div class="p-dot"></div><div class="p-name">Final Exam â€” Calculus II</div><div class="p-deadline">Tomorrow 9 AM</div><div class="p-tag">High</div></div>
+      <div class="p-task hp"><div class="p-dot"></div><div class="p-name">Research Paper Submission</div><div class="p-deadline">Today 11:59 PM</div><div class="p-tag">High</div></div>
+      <div class="p-task mp"><div class="p-dot"></div><div class="p-name">Weekly Quiz â€” Economics</div><div class="p-deadline">In 3 days</div><div class="p-tag">Med</div></div>
+      <div class="p-task lp"><div class="p-dot"></div><div class="p-name">Student Council Meeting</div><div class="p-deadline">Friday 5:00 PM</div><div class="p-tag">Low</div></div>
+      <div class="p-task lp"><div class="p-dot"></div><div class="p-name">Read supplementary chapters</div><div class="p-deadline">Next week</div><div class="p-tag">Low</div></div>
+    </div>
+    <div class="priority-text">
+      <h3>High. Medium. Low.<br>Crystal clear.</h3>
+      <p>Every task gets a priority label based on deadline proximity and academic impact. No more guessing what to work on â€” Timely tells you.</p>
+      <p>You can also manually override priorities anytime. Timely adapts to you, not the other way around.</p>
+      <div class="p-pills">
+        <div class="p-pill">ðŸ”´ Deadline-aware</div>
+        <div class="p-pill">ðŸ”µ Grade-weighted</div>
+        <div class="p-pill">ðŸŸ¢ Manually adjustable</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCHEDULE INTEGRATION -->
+
+<section class="schedule-section" id="schedule">
+  <div class="schedule-grid">
+    <div>
+      <div class="section-label">Schedule Integration</div>
+      <div class="sched-title">Your entire academic<br>life, unified.</div>
+      <p class="sched-p">Timely merges classes, exams, club activities, personal tasks, and study sessions into one clean weekly view. No more juggling between five different apps.</p>
+      <div class="chips">
+        <div class="chip"><span class="chip-dot" style="background:#1a2f6e"></span> University Classes</div>
+        <div class="chip"><span class="chip-dot" style="background:#e8533a"></span> Exams & Tests</div>
+        <div class="chip"><span class="chip-dot" style="background:#f5a623"></span> Club Activities</div>
+        <div class="chip"><span class="chip-dot" style="background:#22c55e"></span> Study Sessions</div>
+      </div>
+    </div>
+    <div class="week-view">
+      <div style="font-weight:600;color:var(--navy);margin-bottom:1rem;font-size:0.9rem;">ðŸ“… Week of Feb 23 â€“ Feb 27</div>
+      <div class="week-grid">
+        <div class="day-col">
+          <div class="day-name">Mon</div><div class="day-num today">23</div>
+          <div class="event-block ev-class">MATH 201</div>
+          <div class="event-block ev-exam">Physics Exam</div>
+          <div class="event-block ev-club">Drama Club</div>
+        </div>
+        <div class="day-col">
+          <div class="day-name">Tue</div><div class="day-num">24</div>
+          <div class="event-block ev-class">ENG 101</div>
+          <div class="event-block ev-study">Study: Calc</div>
+        </div>
+        <div class="day-col">
+          <div class="day-name">Wed</div><div class="day-num">25</div>
+          <div class="event-block ev-class">ECON 201</div>
+          <div class="event-block ev-exam">Quiz: Econ</div>
+          <div class="event-block ev-club">Council</div>
+        </div>
+        <div class="day-col">
+          <div class="day-name">Thu</div><div class="day-num">26</div>
+          <div class="event-block ev-class">CS 301</div>
+          <div class="event-block ev-study">Study: ENG</div>
+        </div>
+        <div class="day-col">
+          <div class="day-name">Fri</div><div class="day-num">27</div>
+          <div class="event-block ev-class">MATH 201</div>
+          <div class="event-block ev-club">Football</div>
+          <div class="event-block ev-study">Free Study</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+
+<section class="testimonials">
+  <div class="section-head">
+    <div class="section-label">Student Stories</div>
+    <h2>Built for students, loved by students</h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
+      <div class="testi-text">"Before Timely I was always stressed about forgetting assignments. Now I open the app in the morning and just know exactly what to do. My GPA went up a full point."</div>
+      <div class="testi-author">
+        <div class="avatar" style="background:var(--navy)">SA</div>
+        <div><div class="author-name">Sara Al-Mansouri</div><div class="author-role">Business Student, Year 3</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
+      <div class="testi-text">"I'm in 3 clubs AND doing a double major. Timely is the only reason I have a social life. The priority system is genuinely smart â€” it knows when to drop everything and study."</div>
+      <div class="testi-author">
+        <div class="avatar" style="background:var(--gold);color:var(--navy)">KM</div>
+        <div><div class="author-name">Khalid Mohammed</div><div class="author-role">Engineering Student, Year 2</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">â˜…â˜…â˜…â˜…â˜…</div>
+      <div class="testi-text">"The app blocker feature alone is worth it. I used to waste hours on social media during study time. Now Timely locks me in and I actually finish what I planned."</div>
+      <div class="testi-author">
+        <div class="avatar" style="background:var(--sky)">LA</div>
+        <div><div class="author-name">Lena Abdallah</div><div class="author-role">Pre-Med Student, Year 1</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+
+<section class="cta-section" id="cta">
+  <div class="section-label" style="color:var(--gold);display:block;margin-bottom:1rem;">Get Started Today</div>
+  <h2>Take control of your<br><em>academic journey.</em></h2>
+  <p>Join thousands of students who never miss a deadline â€” and never feel overwhelmed again.</p>
+  <div class="cta-btns">
+    <a href="#" class="btn btn-gold btn-lg">Get Timely Free</a>
+    <a href="#features" class="btn btn-ghost btn-lg">Explore Features</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+  <div class="footer-logo">
+    <img src="PHOTO-2026-02-21-10-50-56.jpeg" alt="Timely">
+    <span>Timely</span>
+  </div>
+  <p>Â© 2026 Timely. Built for students, by students.</p>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>
